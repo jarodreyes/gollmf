@@ -1,0 +1,30 @@
+{
+  "courseName": "Gotham Greens",
+  "description": "A challenging course through the urban landscape of Gotham",
+  "holes": [
+    {
+      "holeNumber": 1,
+      "targetPhrase": "Barclays Uniclo",
+      "par": 7,
+      "description": "Find the clothing store competitor"
+    },
+    {
+      "holeNumber": 2,
+      "targetPhrase": "Wayne Enterprises",
+      "par": 5,
+      "description": "The business empire of Gotham's protector"
+    },
+    {
+      "holeNumber": 3,
+      "targetPhrase": "Arkham Asylum",
+      "par": 6,
+      "description": "Gotham's most notorious psychiatric facility"
+    },
+    {
+      "holeNumber": 4,
+      "targetPhrase": "Gotham City Hall",
+      "par": 4,
+      "description": "The seat of municipal power"
+    }
+  ]
+}
