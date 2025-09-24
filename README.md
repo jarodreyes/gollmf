@@ -18,15 +18,17 @@ GOLLMF (pronounced "Golf") is a word game where you play through "holes" on a "g
 - **Word Count**: Every word you use in prompts counts toward your score
 - **LLM Words**: You can use any words that the LLM outputs in your next prompt
 - **Connector Words**: Words like "at", "the", "and", "for" (when not part of proper nouns) are free
+- **Traps**: Each hole has forbidden words - using them adds +1 penalty per word!
 - **Par**: Each hole has a target score - try to get under par!
 
 ### Example Hole
-- **Hole 1**: Target phrase "Barclays Uniclo" (Par 7)
-- **Your prompt**: "What store sells clothes?" (4 words)
-- **GPT response**: "Many stores sell clothes, like Uniqlo, H&M, Zara..."
-- **Your next prompt**: "Uniqlo competitor?" (2 words)
-- **GPT response**: "Barclays Uniclo" ✅
-- **Your score**: 4 + 2 = 6 (1 under par!)
+- **Hole 1**: Target phrase "Hamilton: An American Musical" (Par 4)
+- **Traps**: "in the heights", "miranda", "broadway", "hamilton", "american", "musical"
+- **Your prompt**: "What Broadway show?" (3 words)
+- **GPT response**: "Many Broadway shows, like Wicked, The Lion King..."
+- **Your next prompt**: "Lin-Manuel Miranda show?" (4 words + 1 trap penalty for "miranda")
+- **GPT response**: "Hamilton: An American Musical" ✅
+- **Your score**: 3 + 4 + 1 = 8 (4 over par - trap penalty hurt!)
 
 ### Winning
 - Complete all holes on the course

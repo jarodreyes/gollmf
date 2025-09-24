@@ -4,27 +4,31 @@
   "holes": [
     {
       "holeNumber": 1,
-      "targetPhrase": "Barclays Uniclo",
-      "par": 7,
-      "description": "Find the clothing store competitor"
+      "targetPhrase": "Hamilton: An American Musical",
+      "par": 4,
+      "description": "Don't throw away your shot",
+      "traps": ["in the heights", "miranda", "broadway", "hamilton", "american", "musical"]
     },
     {
       "holeNumber": 2,
-      "targetPhrase": "Wayne Enterprises",
-      "par": 5,
-      "description": "The business empire of Gotham's protector"
+      "targetPhrase": "Barclays Uniqlo",
+      "par": 6,
+      "description": "An odd pairing",
+      "traps": ["barclays", "uniqlo", "clothing", "store", "bank"]
     },
     {
       "holeNumber": 3,
-      "targetPhrase": "Arkham Asylum",
-      "par": 6,
-      "description": "Gotham's most notorious psychiatric facility"
+      "targetPhrase": "Biggie Subway Freestyle",
+      "par": 9,
+      "description": "A legendary moment for culture",
+      "traps": ["biggie", "subway", "freestyle", "rap", "hip hop", "notorious"]
     },
     {
       "holeNumber": 4,
-      "targetPhrase": "Gotham City Hall",
-      "par": 4,
-      "description": "The seat of municipal power"
+      "targetPhrase": "Seinfeld Soup Nazi on a Purple Couch",
+      "par": 16,
+      "description": "Don't stand around, order man!",
+      "traps": ["seinfeld", "soup", "nazi", "purple", "couch", "jerry", "kramer", "elaine", "george"]
     }
   ]
 }

@@ -38,6 +38,11 @@ class GOLLMFGame:
         hole = self.course['holes'][hole_number]
         print(f"\nHole {hole['holeNumber']}: {hole['description']}")
         print(f"Target: '{hole['targetPhrase']}' (Par {hole['par']})")
+        
+        if 'traps' in hole and hole['traps']:
+            print(f"⚠️  TRAPS: Avoid these words: {', '.join(hole['traps'])}")
+            print("   Each trap word used adds +1 to your score!")
+        
         print("Start your conversation with GPT!")
         print("-" * 30)
         
@@ -46,6 +51,7 @@ class GOLLMFGame:
             'hole_number': hole['holeNumber'],
             'target': hole['targetPhrase'],
             'par': hole['par'],
+            'traps': hole.get('traps', []),
             'prompts': [],
             'word_count': 0
         }
