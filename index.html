@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOLLMF - Daily Word Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .daily-puzzle {
+            text-align: center;
+        }
+
+        .puzzle-title {
+            font-size: 1.5rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .hole-info {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .target-phrase {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .par-info {
+            color: #718096;
+            margin-bottom: 15px;
+        }
+
+        .traps {
+            background: #fed7d7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .traps h4 {
+            color: #c53030;
+            margin-bottom: 10px;
+        }
+
+        .trap-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .trap-word {
+            background: #fc8181;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .game-area {
+            margin-top: 30px;
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #5a67d8;
+        }
+
+        .score-display {
+            background: #e6fffa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #38b2ac;
+        }
+
+        .rules-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .rules-link a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .rules-link a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .conversation {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .user-message {
+            background: #e6f3ff;
+            margin-left: 20px;
+        }
+
+        .gpt-message {
+            background: #f0f4f8;
+            margin-right: 20px;
+        }
+
+        .word-count {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .trap-warning {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏌️ GOLLMF</h1>
+            <p>Get GPT to say the target phrase using as few words as possible!</p>
+        </div>
+
+        <div class="game-card">
+            <div class="daily-puzzle">
+                <h2 class="puzzle-title">Today's Puzzle</h2>
+                
+                <div class="hole-info">
+                    <div class="target-phrase" id="targetPhrase">Loading...</div>
+                    <div class="par-info">Par: <span id="par">-</span></div>
+                    <div id="description">Loading puzzle...</div>
+                </div>
+
+                <div class="traps" id="trapsSection" style="display: none;">
+                    <h4>⚠️ TRAPS - Avoid these words (each adds +1 penalty):</h4>
+                    <div class="trap-words" id="trapWords"></div>
+                </div>
+
+                <div class="game-area">
+                    <div class="conversation" id="conversation">
+                        <div class="message gpt-message">
+                            <strong>GPT:</strong> Hello! I'm ready to help. What would you like to know?
+                        </div>
+                    </div>
+
+                    <input type="text" class="prompt-input" id="promptInput" placeholder="Type your prompt here..." maxlength="200">
+                    <button class="submit-btn" onclick="submitPrompt()">Send</button>
+
+                    <div class="score-display" id="scoreDisplay" style="display: none;">
+                        <strong>Current Score:</strong> <span id="currentScore">0</span> words
+                        <div class="word-count">Par: <span id="currentPar">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rules-link">
+            <a href="README.md" target="_blank">📖 View Complete Rules</a>
+        </div>
+    </div>
+
+    <script>
+        let currentHole = null;
+        let wordCount = 0;
+        let currentDay = new Date().toDateString();
+
+        // Load today's puzzle
+        async function loadDailyPuzzle() {
+            try {
+                const response = await fetch('courses/gotham-greens.json');
+                const course = await response.json();
+                
+                // Use day of year to determine which hole to use
+                const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                const holeIndex = dayOfYear % course.holes.length;
+                
+                currentHole = course.holes[holeIndex];
+                
+                document.getElementById('targetPhrase').textContent = currentHole.targetPhrase;
+                document.getElementById('par').textContent = currentHole.par;
+                document.getElementById('description').textContent = currentHole.description;
+                
+                if (currentHole.traps && currentHole.traps.length > 0) {
+                    document.getElementById('trapsSection').style.display = 'block';
+                    const trapWordsDiv = document.getElementById('trapWords');
+                    trapWordsDiv.innerHTML = currentHole.traps.map(trap => 
+                        `<span class="trap-word">${trap}</span>`
+                    ).join('');
+                }
+                
+                document.getElementById('currentPar').textContent = currentHole.par;
+                document.getElementById('scoreDisplay').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading puzzle:', error);
+                document.getElementById('targetPhrase').textContent = 'Error loading puzzle';
+            }
+        }
+
+        function submitPrompt() {
+            const input = document.getElementById('promptInput');
+            const prompt = input.value.trim();
+            
+            if (!prompt) return;
+            
+            // Add user message to conversation
+            addMessage('You', prompt, 'user-message');
+            
+            // Check for traps
+            const trapPenalty = checkTraps(prompt);
+            const promptWords = prompt.split(' ').length;
+            const totalWords = promptWords + trapPenalty;
+            
+            wordCount += totalWords;
+            
+            if (trapPenalty > 0) {
+                addTrapWarning(trapPenalty);
+            }
+            
+            // Simulate GPT response (in real game, this would be actual GPT API call)
+            const gptResponse = simulateGPTResponse(prompt);
+            addMessage('GPT', gptResponse, 'gpt-message');
+            
+            // Check for win
+            if (checkWin(gptResponse)) {
+                showWinMessage();
+            }
+            
+            // Update score
+            updateScore();
+            
+            // Clear input
+            input.value = '';
+        }
+
+        function addMessage(sender, message, className) {
+            const conversation = document.getElementById('conversation');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${className}`;
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        function addTrapWarning(penalty) {
+            const conversation = document.getElementById('conversation');
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'trap-warning';
+            warningDiv.textContent = `⚠️ TRAP HIT! +${penalty} penalty for using forbidden words`;
+            conversation.appendChild(warningDiv);
+        }
+
+        function checkTraps(prompt) {
+            if (!currentHole.traps) return 0;
+            
+            let penalty = 0;
+            const promptLower = prompt.toLowerCase();
+            
+            currentHole.traps.forEach(trap => {
+                if (promptLower.includes(trap.toLowerCase())) {
+                    penalty++;
+                }
+            });
+            
+            return penalty;
+        }
+
+        function simulateGPTResponse(prompt) {
+            // Simple simulation - in real game, this would call GPT API
+            const responses = [
+                "I need more context to help you with that.",
+                "Could you be more specific about what you're looking for?",
+                "That's an interesting question. Let me think...",
+                "I'm not sure I understand what you mean.",
+                "Can you provide more details?"
+            ];
+            
+            // Check if prompt might lead to target
+            const promptLower = prompt.toLowerCase();
+            if (promptLower.includes('show') || promptLower.includes('musical')) {
+                return currentHole.targetPhrase;
+            }
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function checkWin(response) {
+            const responseLower = response.toLowerCase();
+            const targetLower = currentHole.targetPhrase.toLowerCase();
+            return responseLower.includes(targetLower);
+        }
+
+        function showWinMessage() {
+            const conversation = document.getElementById('conversation');
+            const winDiv = document.createElement('div');
+            winDiv.className = 'message';
+            winDiv.style.background = '#c6f6d5';
+            winDiv.style.color = '#22543d';
+            winDiv.style.fontWeight = 'bold';
+            winDiv.innerHTML = `🎉 SUCCESS! You got "${currentHole.targetPhrase}" in ${wordCount} words!`;
+            conversation.appendChild(winDiv);
+        }
+
+        function updateScore() {
+            document.getElementById('currentScore').textContent = wordCount;
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('promptInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitPrompt();
+            }
+        });
+
+        // Load puzzle on page load
+        loadDailyPuzzle();
+    </script>
+</body>
+</html>

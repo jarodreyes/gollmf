@@ -22,13 +22,13 @@ GOLLMF (pronounced "Golf") is a word game where you play through "holes" on a "g
 - **Par**: Each hole has a target score - try to get under par!
 
 ### Example Hole
-- **Hole 1**: Target phrase "Hamilton: An American Musical" (Par 4)
-- **Traps**: "in the heights", "miranda", "broadway", "hamilton", "american", "musical"
-- **Your prompt**: "What Broadway show?" (3 words)
-- **GPT response**: "Many Broadway shows, like Wicked, The Lion King..."
-- **Your next prompt**: "Lin-Manuel Miranda show?" (4 words + 1 trap penalty for "miranda")
-- **GPT response**: "Hamilton: An American Musical" ✅
-- **Your score**: 3 + 4 + 1 = 8 (4 over par - trap penalty hurt!)
+- **Hole 1**: Target phrase "Mystery Target" (Par 5)
+- **Traps**: "mystery", "target", "clue", "answer", "solution"
+- **Your prompt**: "What am I thinking?" (4 words)
+- **GPT response**: "I need more context to help you..."
+- **Your next prompt**: "Give me a hint" (4 words)
+- **GPT response**: "Mystery Target" ✅
+- **Your score**: 4 + 4 = 8 (3 over par - could do better!)
 
 ### Winning
 - Complete all holes on the course
