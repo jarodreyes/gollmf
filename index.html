@@ -617,7 +617,8 @@
                     },
                     body: JSON.stringify({ 
                         prompt: prompt,
-                        conversationHistory: conversationHistory
+                        conversationHistory: conversationHistory,
+                        targetPhrase: currentHole ? currentHole.targetPhrase : ''
                     })
                 });
                 
