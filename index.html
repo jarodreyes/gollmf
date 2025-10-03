@@ -727,19 +727,23 @@
             const targetWords = currentHole.targetPhrase.toLowerCase().split(/\s+/);
             const responseWords = response.toLowerCase().split(/\s+/);
             
-            // Check if all target words are present in the AI's response
-            const allTargetWordsPresent = targetWords.every(targetWord => 
+            // Filter out common filler words
+            const fillerWords = ['on', 'a', 'the', 'and', 'or', 'but', 'in', 'at', 'to', 'for', 'of', 'with', 'by'];
+            const keyWords = targetWords.filter(word => !fillerWords.includes(word));
+            
+            // Check if all key words are present in the AI's response
+            const allKeyWordsPresent = keyWords.every(keyWord => 
                 responseWords.some(responseWord => 
-                    responseWord.includes(targetWord) || targetWord.includes(responseWord)
+                    responseWord.includes(keyWord) || keyWord.includes(responseWord)
                 )
             );
             
             // Also check if AI has said all key words across the entire conversation
-            const allKeyWordsSaid = targetWords.every(targetWord => 
-                aiSaidWords.has(targetWord.toLowerCase())
+            const allKeyWordsSaid = keyWords.every(keyWord => 
+                aiSaidWords.has(keyWord.toLowerCase())
             );
             
-            return allTargetWordsPresent || allKeyWordsSaid;
+            return allKeyWordsPresent || allKeyWordsSaid;
         }
 
         function showWinMessage() {
