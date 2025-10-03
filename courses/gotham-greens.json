@@ -25,10 +25,10 @@
     },
     {
       "holeNumber": 4,
-      "targetPhrase": "Seinfeld Soup Nazi on a Purple Couch",
+      "targetPhrase": "Seinfeld Soup Nazi on a Orange Couch",
       "par": 16,
       "description": "Don't stand around, order man!",
-      "traps": ["seinfeld", "soup", "nazi", "purple", "couch", "jerry", "kramer", "elaine", "george", "friends"]
+      "traps": ["seinfeld", "soup", "nazi", "orange", "couch", "jerry", "kramer", "elaine", "george", "friends"]
     }
   ]
 }

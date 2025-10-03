@@ -420,9 +420,8 @@
                 const response = await fetch('courses/gotham-greens.json');
                 course = await response.json();
                 
-                // Use day of year to determine which hole to use
-                const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-                currentHoleIndex = dayOfYear % course.holes.length;
+                // Start on hole 1 for testing (change this to use day of year for daily puzzles)
+                currentHoleIndex = 0; // Always start with hole 1
                 
                 loadHole(currentHoleIndex);
                 loadLeaderboard();

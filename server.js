@@ -36,14 +36,14 @@ app.post('/api/chat', async (req, res) => {
     const messages = [
       {
         role: 'system',
-        content: `You are playing GOLLMF, a word game where the player tries to get you to say a specific target phrase using as few words as possible. 
+        content: `You are a pro guesser of answers.
 
         Game Rules:
-        - The player is trying to get you to say a specific target phrase
+        - The player is giving you clues. 
         - They want to use as few words as possible in their prompts
-        - You should respond naturally and helpfully to their questions
-        - Don't try to guess what the target phrase is - just answer their questions normally
+        - You should respond with answers to their clues. Don't repeat the clue. 
         - Keep your responses concise but helpful
+        - If the player uses a + or - They are trying to alter the answer. 
         - If they ask you to say something specific, you can say it if it's appropriate`
       },
       ...conversationHistory,
