@@ -723,9 +723,23 @@
         }
 
         function checkWin(response) {
-            const responseLower = response.toLowerCase();
-            const targetLower = currentHole.targetPhrase.toLowerCase();
-            return responseLower.includes(targetLower);
+            // Check if AI has said all key words from the target phrase
+            const targetWords = currentHole.targetPhrase.toLowerCase().split(/\s+/);
+            const responseWords = response.toLowerCase().split(/\s+/);
+            
+            // Check if all target words are present in the AI's response
+            const allTargetWordsPresent = targetWords.every(targetWord => 
+                responseWords.some(responseWord => 
+                    responseWord.includes(targetWord) || targetWord.includes(responseWord)
+                )
+            );
+            
+            // Also check if AI has said all key words across the entire conversation
+            const allKeyWordsSaid = targetWords.every(targetWord => 
+                aiSaidWords.has(targetWord.toLowerCase())
+            );
+            
+            return allTargetWordsPresent || allKeyWordsSaid;
         }
 
         function showWinMessage() {
