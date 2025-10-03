@@ -65,6 +65,7 @@
             padding: 20px;
             margin: 20px 0;
             border-left: 4px solid #667eea;
+            border: 2px solid #e2e8f0;
         }
 
         .target-phrase {
@@ -218,27 +219,28 @@
             border-radius: 10px;
             padding: 20px;
             border-left: 4px solid #667eea;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .hole-progress h3 {
             color: #2d3748;
-            margin-bottom: 15px;
+            margin-bottom: 0;
             font-size: 1.2rem;
         }
 
-        .progress-bar {
-            background: #e2e8f0;
+        .puzzle-instructions {
+            background: #e6f3ff;
             border-radius: 10px;
-            height: 20px;
-            overflow: hidden;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3182ce;
         }
 
-        .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            height: 100%;
-            transition: width 0.3s ease;
-            border-radius: 10px;
+        .puzzle-instructions p {
+            color: #2c5282;
+            font-weight: 500;
+            margin: 0;
+            font-size: 1rem;
         }
 
         .leaderboard-card {
@@ -345,10 +347,11 @@
                     
                     <div class="hole-progress">
                         <h3>Hole <span id="currentHoleNumber">1</span>: Par <span id="par">-</span></h3>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                        </div>
                     </div>
+                
+                <div class="puzzle-instructions">
+                    <p>Prompt the AI to reply with this string, using as few words as possible. (avoid the traps!)</p>
+                </div>
                 
                 <div class="hole-info">
                     <div class="target-phrase" id="targetPhrase">Loading...</div>
@@ -380,26 +383,26 @@
                     </button>
                 </div>
             </div>
-        </div>
-        
-        <div class="leaderboard-card">
-            <div class="leaderboard">
-                <h4>🏆 Leaderboard</h4>
-                <div class="leaderboard-list" id="leaderboardList">
-                    <div class="leaderboard-item">
-                        <span class="rank">1st</span>
-                        <span class="player">Player 1</span>
-                        <span class="score">3 words</span>
-                    </div>
-                    <div class="leaderboard-item">
-                        <span class="rank">2nd</span>
-                        <span class="player">Player 2</span>
-                        <span class="score">4 words</span>
-                    </div>
-                    <div class="leaderboard-item">
-                        <span class="rank">3rd</span>
-                        <span class="player">Player 3</span>
-                        <span class="score">5 words</span>
+            
+            <div class="leaderboard-card">
+                <div class="leaderboard">
+                    <h4>🏆 Leaderboard</h4>
+                    <div class="leaderboard-list" id="leaderboardList">
+                        <div class="leaderboard-item">
+                            <span class="rank">1st</span>
+                            <span class="player">Player 1</span>
+                            <span class="score">3 words</span>
+                        </div>
+                        <div class="leaderboard-item">
+                            <span class="rank">2nd</span>
+                            <span class="player">Player 2</span>
+                            <span class="score">4 words</span>
+                        </div>
+                        <div class="leaderboard-item">
+                            <span class="rank">3rd</span>
+                            <span class="player">Player 3</span>
+                            <span class="score">5 words</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -501,8 +504,6 @@
         }
 
         function updateProgress() {
-            const progressPercent = Math.min((wordCount / currentHole.par) * 100, 100);
-            document.getElementById('progressFill').style.width = progressPercent + '%';
             document.getElementById('currentScore').textContent = wordCount;
         }
 
