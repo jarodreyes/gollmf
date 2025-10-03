@@ -370,25 +370,26 @@
                 </div>
             </div>
             
-            <div class="leaderboard-card">
-                <div class="leaderboard">
-                    <h4>🏆 Leaderboard</h4>
-                    <div class="leaderboard-list" id="leaderboardList">
-                        <div class="leaderboard-item">
-                            <span class="rank">1st</span>
-                            <span class="player">Player 1</span>
-                            <span class="score">3 words</span>
-                        </div>
-                        <div class="leaderboard-item">
-                            <span class="rank">2nd</span>
-                            <span class="player">Player 2</span>
-                            <span class="score">4 words</span>
-                        </div>
-                        <div class="leaderboard-item">
-                            <span class="rank">3rd</span>
-                            <span class="player">Player 3</span>
-                            <span class="score">5 words</span>
-                        </div>
+            
+        </div>
+        <div class="leaderboard-card">
+            <div class="leaderboard">
+                <h4>🏆 Leaderboard</h4>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <div class="leaderboard-item">
+                        <span class="rank">1st</span>
+                        <span class="player">Player 1</span>
+                        <span class="score">3 words</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="rank">2nd</span>
+                        <span class="player">Player 2</span>
+                        <span class="score">4 words</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="rank">3rd</span>
+                        <span class="player">Player 3</span>
+                        <span class="score">5 words</span>
                     </div>
                 </div>
             </div>
@@ -493,7 +494,7 @@
             document.getElementById('currentScore').textContent = wordCount;
         }
 
-        function submitPrompt() {
+        async function submitPrompt() {
             const input = document.getElementById('promptInput');
             const prompt = input.value.trim();
             
@@ -513,15 +514,30 @@
                 addTrapWarning(trapPenalty);
             }
             
-            // Simulate GPT response (in real game, this would be actual GPT API call)
-            const gptResponse = simulateGPTResponse(prompt);
-            addMessage('GPT', gptResponse, 'gpt-message');
+            // Show loading state
+            addMessage('GPT', 'Thinking...', 'gpt-message');
             
-            // Check for win
-            if (checkWin(gptResponse)) {
-                showWinMessage();
-                gameCompleted = true;
-                document.getElementById('nextHoleBtn').style.display = 'block';
+            try {
+                // Call real OpenAI API
+                const gptResponse = await callOpenAI(prompt);
+                
+                // Remove loading message and add real response
+                const conversation = document.getElementById('conversation');
+                conversation.removeChild(conversation.lastChild);
+                addMessage('GPT', gptResponse, 'gpt-message');
+                
+                // Check for win
+                if (checkWin(gptResponse)) {
+                    showWinMessage();
+                    gameCompleted = true;
+                    document.getElementById('nextHoleBtn').style.display = 'block';
+                }
+                
+            } catch (error) {
+                // Remove loading message and show error
+                const conversation = document.getElementById('conversation');
+                conversation.removeChild(conversation.lastChild);
+                addMessage('GPT', `Error: ${error.message}`, 'gpt-message');
             }
             
             // Update score and progress
@@ -589,23 +605,57 @@
             return penalty;
         }
 
-        function simulateGPTResponse(prompt) {
-            // Simple simulation - in real game, this would call GPT API
-            const responses = [
-                "I need more context to help you with that.",
-                "Could you be more specific about what you're looking for?",
-                "That's an interesting question. Let me think...",
-                "I'm not sure I understand what you mean.",
-                "Can you provide more details?"
-            ];
+        async function callOpenAI(prompt) {
+            try {
+                // Get conversation history
+                const conversationHistory = getConversationHistory();
+                
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        prompt: prompt,
+                        conversationHistory: conversationHistory
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to get response');
+                }
+                
+                const data = await response.json();
+                return data.response;
+                
+            } catch (error) {
+                console.error('API Error:', error);
+                return `Sorry, I encountered an error: ${error.message}. Please try again.`;
+            }
+        }
+
+        function getConversationHistory() {
+            const conversation = document.getElementById('conversation');
+            const messages = conversation.querySelectorAll('.message');
+            const history = [];
             
-            // Check if prompt might lead to target
-            const promptLower = prompt.toLowerCase();
-            if (promptLower.includes('show') || promptLower.includes('musical')) {
-                return currentHole.targetPhrase;
+            for (let i = 0; i < messages.length; i += 2) {
+                const userMessage = messages[i];
+                const gptMessage = messages[i + 1];
+                
+                if (userMessage && gptMessage) {
+                    const userText = userMessage.textContent.replace('You: ', '');
+                    const gptText = gptMessage.textContent.replace('GPT: ', '');
+                    
+                    history.push(
+                        { role: 'user', content: userText },
+                        { role: 'assistant', content: gptText }
+                    );
+                }
             }
             
-            return responses[Math.floor(Math.random() * responses.length)];
+            return history;
         }
 
         function checkWin(response) {
