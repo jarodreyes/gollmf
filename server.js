@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 // OpenAI API endpoint
 app.post('/api/chat', async (req, res) => {
   try {
-    const { prompt, conversationHistory = [], targetPhrase = '' } = req.body;
+    const { prompt, conversationHistory = [] } = req.body;
     
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is required' });
@@ -38,15 +38,13 @@ app.post('/api/chat', async (req, res) => {
         role: 'system',
         content: `You are playing GOLLMF, a word game where the player tries to get you to say a specific target phrase using as few words as possible. 
 
-Game Rules:
-- The player is trying to get you to say a specific target phrase
-- They want to use as few words as possible in their prompts
-- You should respond naturally and helpfully to their questions
-- Don't try to guess what the target phrase is - just answer their questions normally
-- Keep your responses concise but helpful
-- If they ask you to say something specific, you can say it if it's appropriate
-
-Current context: You're having a conversation with a player who is trying to get you to say their target phrase.${targetPhrase ? ` The target phrase they want you to say is: "${targetPhrase}"` : ''} Respond naturally to their questions.`
+        Game Rules:
+        - The player is trying to get you to say a specific target phrase
+        - They want to use as few words as possible in their prompts
+        - You should respond naturally and helpfully to their questions
+        - Don't try to guess what the target phrase is - just answer their questions normally
+        - Keep your responses concise but helpful
+        - If they ask you to say something specific, you can say it if it's appropriate`
       },
       ...conversationHistory,
       {

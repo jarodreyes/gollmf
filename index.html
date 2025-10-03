@@ -106,6 +106,11 @@
             font-size: 0.9rem;
         }
 
+        .trap-word.ai-said {
+            background: #22c55e;
+            color: white;
+        }
+
         .game-area {
             margin-top: 30px;
         }
@@ -407,6 +412,7 @@
         let currentDay = new Date().toDateString();
         let course = null;
         let gameCompleted = false;
+        let aiSaidWords = new Set(); // Track words the AI has said
 
         // Load today's puzzle
         async function loadDailyPuzzle() {
@@ -431,6 +437,7 @@
             currentHole = course.holes[holeIndex];
             wordCount = 0;
             gameCompleted = false;
+            aiSaidWords.clear(); // Reset AI-said words for new hole
             
             document.getElementById('currentHoleNumber').textContent = currentHole.holeNumber;
             document.getElementById('targetPhrase').textContent = currentHole.targetPhrase;
@@ -439,10 +446,7 @@
             
             if (currentHole.traps && currentHole.traps.length > 0) {
                 document.getElementById('trapsSection').style.display = 'block';
-                const trapWordsDiv = document.getElementById('trapWords');
-                trapWordsDiv.innerHTML = currentHole.traps.map(trap => 
-                    `<span class="trap-word">${trap}</span>`
-                ).join('');
+                updateTrapWordsDisplay();
             } else {
                 document.getElementById('trapsSection').style.display = 'none';
             }
@@ -505,7 +509,9 @@
             
             // Check for traps
             const trapPenalty = checkTraps(prompt);
-            const promptWords = prompt.split(' ').length;
+            
+            // Count words, excluding those the AI has already said
+            const promptWords = countWordsExcludingAISaid(prompt);
             const totalWords = promptWords + trapPenalty;
             
             wordCount += totalWords;
@@ -525,6 +531,9 @@
                 const conversation = document.getElementById('conversation');
                 conversation.removeChild(conversation.lastChild);
                 addMessage('GPT', gptResponse, 'gpt-message');
+                
+                // Update trap words display to show which ones are now "free"
+                updateTrapWordsDisplay();
                 
                 // Check for win
                 if (checkWin(gptResponse)) {
@@ -577,7 +586,34 @@
             const conversation = document.getElementById('conversation');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${className}`;
-            messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            
+            if (sender === 'GPT') {
+                // Extract words from AI response and add to aiSaidWords
+                const words = message.toLowerCase().split(/\s+/);
+                words.forEach(word => {
+                    // Clean word (remove punctuation)
+                    const cleanWord = word.replace(/[^\w]/g, '');
+                    if (cleanWord.length > 0) {
+                        aiSaidWords.add(cleanWord);
+                    }
+                });
+                
+                // Highlight trap words that AI has said
+                let highlightedMessage = message;
+                if (currentHole && currentHole.traps) {
+                    currentHole.traps.forEach(trap => {
+                        if (aiSaidWords.has(trap.toLowerCase())) {
+                            const regex = new RegExp(`\\b${trap}\\b`, 'gi');
+                            highlightedMessage = highlightedMessage.replace(regex, `<span style="color: #22c55e; font-weight: bold;">${trap}</span>`);
+                        }
+                    });
+                }
+                
+                messageDiv.innerHTML = `<strong>${sender}:</strong> ${highlightedMessage}`;
+            } else {
+                messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            }
+            
             conversation.appendChild(messageDiv);
             conversation.scrollTop = conversation.scrollHeight;
         }
@@ -597,12 +633,40 @@
             const promptLower = prompt.toLowerCase();
             
             currentHole.traps.forEach(trap => {
-                if (promptLower.includes(trap.toLowerCase())) {
+                const trapLower = trap.toLowerCase();
+                // Only penalize if the trap word is used AND the AI hasn't said it yet
+                if (promptLower.includes(trapLower) && !aiSaidWords.has(trapLower)) {
                     penalty++;
                 }
             });
             
             return penalty;
+        }
+
+        function countWordsExcludingAISaid(prompt) {
+            const words = prompt.split(/\s+/);
+            let count = 0;
+            
+            words.forEach(word => {
+                const cleanWord = word.toLowerCase().replace(/[^\w]/g, '');
+                // Only count words that the AI hasn't said yet
+                if (cleanWord.length > 0 && !aiSaidWords.has(cleanWord)) {
+                    count++;
+                }
+            });
+            
+            return count;
+        }
+
+        function updateTrapWordsDisplay() {
+            if (!currentHole.traps) return;
+            
+            const trapWordsDiv = document.getElementById('trapWords');
+            trapWordsDiv.innerHTML = currentHole.traps.map(trap => {
+                const isAISaid = aiSaidWords.has(trap.toLowerCase());
+                const className = isAISaid ? 'trap-word ai-said' : 'trap-word';
+                return `<span class="${className}">${trap}</span>`;
+            }).join('');
         }
 
         async function callOpenAI(prompt) {
